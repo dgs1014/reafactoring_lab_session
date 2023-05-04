@@ -38,7 +38,7 @@ public class Network {
     Holds a pointer to some "first" node in the token ring.
     Used to ensure that various printing operations return expected behaviour.
 	 */
-	private Node firstNode_;
+	public Node firstNode_;
 	/**
     Maps the names of workstations on the actual workstations.
     Used to initiate the requests for the network.
@@ -263,102 +263,10 @@ Return a printable representation of #receiver.
 	public String toString () {
 		assert isInitialized();
 		StringBuffer buf = new StringBuffer(30 * workstations_.size());
-		printOn(buf);
+		firstNode_.printOn(this, buf);
 		return buf.toString();
 	}
 
-	/**
-Write a printable representation of #receiver on the given #buf.
-<p><strong>Precondition:</strong> isInitialized();</p>
-	 */
-	public void printOn (StringBuffer buf) {
-		assert isInitialized();
-		Node currentNode = firstNode_;
-		do {
-			extractedSwitch(buf, currentNode);
-			buf.append(" -> ");
-			currentNode = currentNode.nextNode_;
-		} while (currentNode != firstNode_);
-		buf.append(" ... ");
-	}
-
-	private void extractedSwitch(StringBuffer buf, Node currentNode) {
-		switch (currentNode.type_) {
-		case Node.NODE:
-			buf.append("Node ");
-			buf.append(currentNode.name_);
-			buf.append(" [Node]");
-			break;
-		case Node.WORKSTATION:
-			buf.append("Workstation ");
-			buf.append(currentNode.name_);
-			buf.append(" [Workstation]");
-			break;
-		case Node.PRINTER:
-			buf.append("Printer ");
-			buf.append(currentNode.name_);
-			buf.append(" [Printer]");
-			break;
-		default:
-			buf.append("(Unexpected)");;
-			break;
-		};
-	}
-
-	/**
-Write a HTML representation of #receiver on the given #buf.
- <p><strong>Precondition:</strong> isInitialized();</p>
-	 */
-	public void printHTMLOn (StringBuffer buf) {
-		assert isInitialized();
-
-		buf.append("<HTML>\n<HEAD>\n<TITLE>LAN Simulation</TITLE>\n</HEAD>\n<BODY>\n<H1>LAN SIMULATION</H1>");
-		Node currentNode = firstNode_;
-		buf.append("\n\n<UL>");
-		do {
-			buf.append("\n\t<LI> ");
-			extractedSwitch(buf, currentNode);
-			buf.append(" </LI>");
-			currentNode = currentNode.nextNode_;
-		} while (currentNode != firstNode_);
-		buf.append("\n\t<LI>...</LI>\n</UL>\n\n</BODY>\n</HTML>\n");
-	}
-
-	/**
-Write an XML representation of #receiver on the given #buf.
-<p><strong>Precondition:</strong> isInitialized();</p>
-	 */
-	public void printXMLOn (StringBuffer buf) {
-		assert isInitialized();
-
-		Node currentNode = firstNode_;
-		buf.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n<network>");
-		do {
-			buf.append("\n\t");
-			switch (currentNode.type_) {
-			case Node.NODE:
-				buf.append("<node>");
-				buf.append(currentNode.name_);
-				buf.append("</node>");
-				break;
-			case Node.WORKSTATION:
-				buf.append("<workstation>");
-				buf.append(currentNode.name_);
-				buf.append("</workstation>");
-				break;
-			case Node.PRINTER:
-				buf.append("<printer>");
-				buf.append(currentNode.name_);
-				buf.append("</printer>");
-				break;
-			default:
-				buf.append("<unknown></unknown>");;
-				break;
-			};
-			currentNode = currentNode.nextNode_;
-		} while (currentNode != firstNode_);
-		buf.append("\n</network>");
-	}
 	private boolean atDestination(Packet packet,Node currentNode) {
 		return packet.destination_.equals(currentNode.name_);
 	}
