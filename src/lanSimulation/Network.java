@@ -182,7 +182,7 @@ which should be treated by all nodes.
 			};
 			currentNode.extractedWriterNode(report, this);
 			currentNode = currentNode.nextNode_;
-		} while (! packet.destination_.equals(currentNode.name_));
+		} while (atDestination(packet,currentNode));
 
 		try {
 			report.write(">>> Broadcast travelled whole token ring.\n\n");
@@ -227,13 +227,13 @@ Therefore #receiver sends a packet across the token ring network, until either
 
 		startNode.extractedWriterNode(report, this);
 		currentNode = startNode.nextNode_;
-		while ((! packet.destination_.equals(currentNode.name_))
+		while (atDestination(packet,currentNode)
 				& (! packet.origin_.equals(currentNode.name_))) {
 			currentNode.extractedWriterNode(report, this);
 			currentNode = currentNode.nextNode_;
 		};
 
-		if (packet.destination_.equals(currentNode.name_)) {
+		if (atDestination(packet,currentNode)) {
 			result = currentNode.printDocument(this, packet, report);
 		} else {
 			try {
@@ -359,5 +359,7 @@ Write an XML representation of #receiver on the given #buf.
 		} while (currentNode != firstNode_);
 		buf.append("\n</network>");
 	}
-
+	private boolean atDestination(Packet packet,Node currentNode) {
+		return !packet.destination_.equals(currentNode.name_);
+	}
 }
