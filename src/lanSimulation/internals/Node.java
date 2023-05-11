@@ -102,7 +102,7 @@ Construct a <em>Node</em> with given #type and #name, and which is linked to #ne
 		String author = "Unknown";
 		String title = "Untitled";
 		int startPos = 0, endPos = 0;
-	
+
 		if (type_ == Node.PRINTER) {
 			try {
 				if (document.message_.startsWith("!PS")) {
@@ -141,7 +141,7 @@ Construct a <em>Node</em> with given #type and #name, and which is linked to #ne
 			return false;
 		}
 	}
-	
+
 	public void extractedSwitch(StringBuffer buf) {
 		switch (type_) {
 		case Node.NODE:
@@ -187,6 +187,10 @@ Construct a <em>Node</em> with given #type and #name, and which is linked to #ne
 			break;
 		};
 	}
+
+	//Subclases correspondientes para cada uno de los diferentes tipos de nodo
+	public class WorkStation extends Node{}
+	public class Printer extends Node{}
 
 
 
