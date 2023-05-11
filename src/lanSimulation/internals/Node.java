@@ -188,9 +188,6 @@ Construct a <em>Node</em> with given #type and #name, and which is linked to #ne
 		};
 	}
 
-	//Subclases correspondientes para cada uno de los diferentes tipos de nodo
-	public class WorkStation extends Node{}
-	public class Printer extends Node{}
 
 
 
