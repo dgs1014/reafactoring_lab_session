@@ -212,7 +212,7 @@ the tests should work as expected.
 
 	try {
 	    buf.append("---------------------------------ASCII------------------------------------------\n");
-	    network.firstNode_.printOn(network, buf);
+	    network.printOn(network.firstNode_, buf);
 	    buf.append("\n\n---------------------------------HTML------------------------------------------\n");
 	    network.printHTMLOn(network.firstNode_, buf);
 	    buf.append("\n\n---------------------------------XML------------------------------------------\n");
