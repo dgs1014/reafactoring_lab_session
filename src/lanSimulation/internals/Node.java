@@ -142,53 +142,20 @@ Construct a <em>Node</em> with given #type and #name, and which is linked to #ne
 		}
 	}
 
-	public void extractedSwitch(StringBuffer buf) {
-		switch (type_) {
-		case Node.NODE:
-			buf.append("Node ");
-			buf.append(name_);
-			buf.append(" [Node]");
-			break;
-		case Node.WORKSTATION:
-			buf.append("Workstation ");
-			buf.append(name_);
-			buf.append(" [Workstation]");
-			break;
-		case Node.PRINTER:
-			buf.append("Printer ");
-			buf.append(name_);
-			buf.append(" [Printer]");
-			break;
-		default:
-			buf.append("(Unexpected)");;
-			break;
-		};
+
+
+
+	public void toXML(StringBuffer buf) {
+		buf.append("<node>");
+		buf.append(name_);
+		buf.append("</node>");
 	}
 
-	public void extractedSwitchXML(StringBuffer buf) {
-		switch (type_) {
-		case Node.NODE:
-			buf.append("<node>");
-			buf.append(name_);
-			buf.append("</node>");
-			break;
-		case Node.WORKSTATION:
-			buf.append("<workstation>");
-			buf.append(name_);
-			buf.append("</workstation>");
-			break;
-		case Node.PRINTER:
-			buf.append("<printer>");
-			buf.append(name_);
-			buf.append("</printer>");
-			break;
-		default:
-			buf.append("<unknown></unknown>");;
-			break;
-		};
+	public void toText(StringBuffer buf)
+	{
+		buf.append("Node ");
+		buf.append(name_);
+		buf.append(" [Node]");
 	}
-
-
-
-
+	
 }

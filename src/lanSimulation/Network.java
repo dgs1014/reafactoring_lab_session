@@ -284,7 +284,7 @@ Return a printable representation of #receiver.
 		buf.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n<network>");
 		do {
 			buf.append("\n\t");
-			currentNode.extractedSwitchXML(buf);
+			currentNode.toXML(buf);
 			currentNode = currentNode.getNextNode_();
 		} while (currentNode != node);
 		buf.append("\n</network>");
@@ -304,7 +304,7 @@ Return a printable representation of #receiver.
 		buf.append("\n\n<UL>");
 		do {
 			buf.append("\n\t<LI> ");
-			currentNode.extractedSwitch(buf);
+			currentNode.toText(buf);
 			buf.append(" </LI>");
 			currentNode = currentNode.getNextNode_();
 		} while (currentNode != node);
@@ -321,7 +321,7 @@ Return a printable representation of #receiver.
 		assert isInitialized();
 		Node currentNode = node;
 		do {
-			currentNode.extractedSwitch(buf);
+			currentNode.toText(buf);
 			buf.append(" -> ");
 			currentNode = currentNode.getNextNode_();
 		} while (currentNode != node);
