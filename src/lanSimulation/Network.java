@@ -75,10 +75,10 @@ Currently, the network looks as follows.
 		Node wsHans = new Node (Node.WORKSTATION, "Hans");
 		Node prAndy = new Node (Node.PRINTER, "Andy");
 
-		wsFilip.nextNode_ = n1;
-		n1.nextNode_ = wsHans;
-		wsHans.nextNode_ = prAndy;
-		prAndy.nextNode_ = wsFilip;
+		wsFilip.setNextNode_(n1);
+		n1.setNextNode_ (wsHans);
+		wsHans.setNextNode_(prAndy);
+		prAndy.setNextNode_(wsFilip);
 
 		network.workstations_.put(wsFilip.name_, wsFilip);
 		network.workstations_.put(wsHans.name_, wsHans);
@@ -144,7 +144,7 @@ A consistent token ring network
 			encountered.put(currentNode.name_, currentNode);
 			if (currentNode.type_ == Node.WORKSTATION) {workstationsFound++;};
 			if (currentNode.type_ == Node.PRINTER) {printersFound++;};
-			currentNode = currentNode.nextNode_;
+			currentNode = currentNode.getNextNode_();
 		};
 		if (currentNode != firstNode_) {return false;};//not circular
 		if (printersFound == 0) {return false;};//does not contain a printer
@@ -181,7 +181,7 @@ which should be treated by all nodes.
 				// just ignore
 			};
 			currentNode.extractedWriterNode(report, this);
-			currentNode = currentNode.nextNode_;
+			currentNode = currentNode.getNextNode_();
 		} while (! atDestination( packet, currentNode));
 
 		try {
@@ -226,11 +226,11 @@ Therefore #receiver sends a packet across the token ring network, until either
 		startNode = (Node) workstations_.get(workstation);
 
 		startNode.extractedWriterNode(report, this);
-		currentNode = startNode.nextNode_;
+		currentNode = startNode.getNextNode_();
 		while ((! atDestination( packet, currentNode))
 				& (! packet.origin_.equals(currentNode.name_))) {
 			currentNode.extractedWriterNode(report, this);
-			currentNode = currentNode.nextNode_;
+			currentNode = currentNode.getNextNode_();
 		};
 
 		if (atDestination( packet, currentNode)) {
@@ -269,5 +269,64 @@ Return a printable representation of #receiver.
 
 	private boolean atDestination(Packet packet,Node currentNode) {
 		return packet.destination_.equals(currentNode.name_);
+	}
+
+	/**
+	Write an XML representation of #receiver on the given #buf.
+	<p><strong>Precondition:</strong> isInitialized();</p>
+	 * @param node TODO
+	 * @param buf 
+	 */
+	public void printXMLOn (Node node, StringBuffer buf) {
+		assert isInitialized();
+	
+		Node currentNode = node;
+		buf.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n<network>");
+		do {
+			buf.append("\n\t");
+			switch (currentNode.type_) {
+			case Node.NODE:
+				buf.append("<node>");
+				buf.append(currentNode.name_);
+				buf.append("</node>");
+				break;
+			case Node.WORKSTATION:
+				buf.append("<workstation>");
+				buf.append(currentNode.name_);
+				buf.append("</workstation>");
+				break;
+			case Node.PRINTER:
+				buf.append("<printer>");
+				buf.append(currentNode.name_);
+				buf.append("</printer>");
+				break;
+			default:
+				buf.append("<unknown></unknown>");;
+				break;
+			};
+			currentNode = currentNode.getNextNode_();
+		} while (currentNode != node);
+		buf.append("\n</network>");
+	}
+
+	/**
+	Write a HTML representation of #receiver on the given #buf.
+	<p><strong>Precondition:</strong> isInitialized();</p>
+	 * @param node TODO
+	 * @param buf 
+	 */
+	public void printHTMLOn (Node node, StringBuffer buf) {
+		assert isInitialized();
+	
+		buf.append("<HTML>\n<HEAD>\n<TITLE>LAN Simulation</TITLE>\n</HEAD>\n<BODY>\n<H1>LAN SIMULATION</H1>");
+		Node currentNode = node;
+		buf.append("\n\n<UL>");
+		do {
+			buf.append("\n\t<LI> ");
+			currentNode.extractedSwitch(buf, this);
+			buf.append(" </LI>");
+			currentNode = currentNode.getNextNode_();
+		} while (currentNode != node);
+		buf.append("\n\t<LI>...</LI>\n</UL>\n\n</BODY>\n</HTML>\n");
 	}
 }

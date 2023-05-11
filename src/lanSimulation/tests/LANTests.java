@@ -145,10 +145,10 @@ public class LANTests extends TestCase {
         assertEquals("name_",
             node.name_, "n");
         assertEquals("nextNode_",
-            node.nextNode_, null);
-        node.nextNode_ = node;
+            node.getNextNode_(), null);
+        node.setNextNode_(node);
         assertEquals("nextNode_ (after setting)",
-            node.nextNode_, node);
+            node.getNextNode_(), node);
     }
 
     public void testDefaultNetworkToString() {
@@ -214,9 +214,9 @@ the tests should work as expected.
 	    buf.append("---------------------------------ASCII------------------------------------------\n");
 	    network.firstNode_.printOn(network, buf);
 	    buf.append("\n\n---------------------------------HTML------------------------------------------\n");
-	    network.firstNode_.printHTMLOn(network, buf);
+	    network.printHTMLOn(network.firstNode_, buf);
 	    buf.append("\n\n---------------------------------XML------------------------------------------\n");
-	    network.firstNode_.printXMLOn(network, buf);
+	    network.printXMLOn(network.firstNode_, buf);
 	    generateOutput.write(buf.toString());
 	    report.write("\n\n---------------------------------SCENARIO: Print Success --------------------------\n");
 	    network.requestWorkstationPrintsDocument("Filip", "Hello World", "Andy", report);
