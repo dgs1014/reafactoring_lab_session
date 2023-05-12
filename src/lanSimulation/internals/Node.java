@@ -29,24 +29,7 @@ A <em>Node</em> represents a single Node in a Local Area Network (LAN).
 Several types of Nodes exist.
  */
 public class Node {
-	//enumeration constants specifying all legal node types
-	/**
-    A node with type NODE has only basic functionality.
-	 */
-	public static final byte NODE = 0;
-	/**
-    A node with type WORKSTATION may initiate requests on the LAN.
-	 */
-	public static final byte WORKSTATION = 1;
-	/**
-    A node with type PRINTER may accept packages to be printed.
-	 */
-	public static final byte PRINTER = 2;
 
-	/**
-    Holds the type of the Node.
-	 */
-	public byte type_;
 	/**
     Holds the name of the Node.
 	 */
@@ -69,9 +52,7 @@ public class Node {
 Construct a <em>Node</em> with given #type and #name.
 <p><strong>Precondition:</strong> (type >= NODE) & (type <= PRINTER);</p>
 	 */
-	public Node(byte type, String name) {
-		assert (type >= NODE) & (type <= PRINTER);
-		type_ = type;
+	public Node(String name) {
 		name_ = name;
 		setNextNode_(null);
 	}
@@ -80,9 +61,7 @@ Construct a <em>Node</em> with given #type and #name.
 Construct a <em>Node</em> with given #type and #name, and which is linked to #nextNode.
 <p><strong>Precondition:</strong> (type >= NODE) & (type <= PRINTER);</p>
 	 */
-	public Node(byte type, String name, Node nextNode) {
-		assert (type >= NODE) & (type <= PRINTER);
-		type_ = type;
+	public Node(String name, Node nextNode) {
 		name_ = name;
 		setNextNode_(nextNode);
 	}
@@ -98,53 +77,6 @@ Construct a <em>Node</em> with given #type and #name, and which is linked to #ne
 		};
 	}
 
-	public boolean printDocument (Network network, Packet document, Writer report) {
-		String author = "Unknown";
-		String title = "Untitled";
-		int startPos = 0, endPos = 0;
-
-		if (type_ == Node.PRINTER) {
-			try {
-				if (document.message_.startsWith("!PS")) {
-					startPos = document.message_.indexOf("author:");
-					if (startPos >= 0) {
-						endPos = document.message_.indexOf(".", startPos + 7);
-						if (endPos < 0) {endPos = document.message_.length();};
-						author = document.message_.substring(startPos + 7, endPos);};
-						startPos = document.message_.indexOf("title:");
-						if (startPos >= 0) {
-							endPos = document.message_.indexOf(".", startPos + 6);
-							if (endPos < 0) {endPos = document.message_.length();};
-							title = document.message_.substring(startPos + 6, endPos);};
-							network.extractedAccounting(report, author, title);
-							report.write(">>> Postscript job delivered.\n\n");
-							report.flush();
-				} else {
-					title = "ASCII DOCUMENT";
-					if (document.message_.length() >= 16) {
-						author = document.message_.substring(8, 16);};
-						network.extractedAccounting(report, author, title);
-						report.write(">>> ASCII Print job delivered.\n\n");
-						report.flush();
-				};
-			} catch (IOException exc) {
-				// just ignore
-			};
-			return true;
-		} else {
-			try {
-				report.write(">>> Destinition is not a printer, print job cancelled.\n\n");
-				report.flush();
-			} catch (IOException exc) {
-				// just ignore
-			};
-			return false;
-		}
-	}
-
-
-
-
 	public void toXML(StringBuffer buf) {
 		buf.append("<node>");
 		buf.append(name_);
@@ -156,6 +88,19 @@ Construct a <em>Node</em> with given #type and #name, and which is linked to #ne
 		buf.append("Node ");
 		buf.append(name_);
 		buf.append(" [Node]");
+	}
+
+	public boolean printDocument (Network network, Packet document, Writer report) {
+		// Writes exception unless it is a printer node (override in subclass)
+		try {
+			report.write(">>> Destinition is not a printer, print job cancelled.\n\n");
+			report.flush();
+		} catch (IOException exc) {
+			// just ignore
+		};
+		return false;
+	
+	
 	}
 	
 }
