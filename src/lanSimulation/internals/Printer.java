@@ -56,9 +56,8 @@ public class Printer extends Node {
 					report.write(">>> ASCII Print job delivered.\n\n");
 					report.flush();
 			};
-		} catch (IOException exc) {
-			// just ignore
-		};
+		} catch (IOException ignored) {
+        }
 		return true;
 	}
 }

@@ -84,7 +84,7 @@ public class LANTests extends TestCase {
 		}
 	}
 
-	private void YOUMAYWANTTOtestCompareFiles() {
+	private void testCompareFiles() {
 		String fName1 = "testCompare1.txt", fName2 = "testCompare2.txt",
 				fName3 = "testCompare3.txt", fName4 = "testCompare4.txt";
 		FileWriter f1, f2, f3, f4;
@@ -140,7 +140,7 @@ public class LANTests extends TestCase {
         Node node;
 
     	node = new Node("n");
-    	assertTrue("Instance of Node", node instanceof Node); // Si fallan los test aquí, quitar
+    	assertTrue("Instance of Node", node instanceof Node);
         assertEquals("name_",
             node.name_, "n");
         assertEquals("nextNode_",

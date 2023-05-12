@@ -29,6 +29,8 @@ A <em>Network</em> represents the basic data stucture for simulating a Local Are
 The LAN network architecture is a token ring, implying that packahes will be passed from one node to another, until they reached their destination, or until they travelled the whole token ring.
  */
 public class Network {
+	private static final int INITIAL_BUFFER_CAPACITY = 30;
+	
 	/**
     Holds a pointer to myself.
     Used to verify whether I am properly initialized.
@@ -43,7 +45,7 @@ public class Network {
     Maps the names of workstations on the actual workstations.
     Used to initiate the requests for the network.
 	 */
-	private Hashtable workstations_;
+	private Hashtable<String, Node> workstations_;
 
 	/**
 Construct a <em>Network</em> suitable for holding #size Workstations.
@@ -53,7 +55,7 @@ Construct a <em>Network</em> suitable for holding #size Workstations.
 		assert size > 0;
 		initPtr_ = this;
 		firstNode_ = null;
-		workstations_ = new Hashtable(size, 1.0f);
+		workstations_ = new Hashtable<>(size, 1.0f);
 		assert isInitialized();
 		assert ! consistentNetwork();
 	}
@@ -105,12 +107,8 @@ Answer whether #receiver contains a workstation with the given name.
 		Node n;
 
 		assert isInitialized();
-		n = (Node) workstations_.get(ws);
-		if (n == null) {
-			return false;
-		} else {
-			return n instanceof WorkStation;
-		}
+		n = workstations_.get(ws);
+		return n != null && n instanceof WorkStation;
 	};
 
 	/**
@@ -124,33 +122,52 @@ A consistent token ring network
 	 */
 	public boolean consistentNetwork () {
 		assert isInitialized();
-		Enumeration iter;
+		Enumeration<Node> iter;
 		Node currentNode;
 		int printersFound = 0, workstationsFound = 0;
-		Hashtable encountered = new Hashtable(workstations_.size() * 2, 1.0f);
+		Hashtable<String, Node> encountered = new Hashtable<>(workstations_.size() * 2, 1.0f);
 
-		if (workstations_.isEmpty()) {return false;};
-		if (firstNode_ == null) {return false;};
+		if (workstations_.isEmpty()) {
+            return false;
+        }
+        if (firstNode_ == null) {
+            return false;
+        }
+        
 		//verify whether all registered workstations are indeed workstations
 		iter = workstations_.elements();
 		while (iter.hasMoreElements()) {
 			currentNode = (Node) iter.nextElement();
-			if (!(currentNode instanceof WorkStation)) {return false;};
+			if (!(currentNode instanceof WorkStation)) {
+				return false;
+			};
 		};
 		//enumerate the token ring, verifying whether all workstations are registered
 		//also count the number of printers and see whether the ring is circular
 		currentNode = firstNode_;
-		while (! encountered.containsKey(currentNode.name_)) {
-			encountered.put(currentNode.name_, currentNode);
-			if (currentNode instanceof WorkStation) {workstationsFound++;};
-			if (currentNode instanceof Printer) {printersFound++;};
-			currentNode = currentNode.getNextNode_();
-		};
-		if (currentNode != firstNode_) {return false;};//not circular
-		if (printersFound == 0) {return false;};//does not contain a printer
-		if (workstationsFound != workstations_.size()) {return false;}; //not all workstations are registered
-		//all verifications succeedeed
-		return true;}
+        while (!encountered.containsKey(currentNode.name_)) {
+            encountered.put(currentNode.name_, currentNode);
+            if (currentNode instanceof WorkStation) {
+                workstationsFound++;
+            }
+            if (currentNode instanceof Printer) {
+                printersFound++;
+            }
+            currentNode = currentNode.getNextNode_();
+        }
+
+        if (currentNode != firstNode_) {
+            return false;
+        }
+        if (printersFound == 0) {
+            return false;
+        }
+        if (workstationsFound != workstations_.size()) {
+            return false;
+        }
+
+        return true;
+	}
 
 	/**
 The #receiver is requested to broadcast a message to all nodes.
@@ -165,9 +182,8 @@ which should be treated by all nodes.
 
 		try {
 			report.write("Broadcast Request\n");
-		} catch (IOException exc) {
-			// just ignore
-		};
+		} catch (IOException ignored) {
+        }
 
 		Node currentNode = firstNode_;
 		Packet packet = new Packet("BROADCAST", firstNode_.name_, firstNode_.name_);
@@ -177,18 +193,16 @@ which should be treated by all nodes.
 				report.write(currentNode.name_);
 				report.write("' accepts broadcase packet.\n");
 				report.flush();
-			} catch (IOException exc) {
-				// just ignore
-			};
+			} catch (IOException ignored) {
+	        }
 			currentNode.extractedWriterNode(report, this);
 			currentNode = currentNode.getNextNode_();
 		} while (! atDestination( packet, currentNode));
 
 		try {
 			report.write(">>> Broadcast travelled whole token ring.\n\n");
-		} catch (IOException exc) {
-			// just ignore
-		};
+		} catch (IOException ignored) {
+        }
 		return true;
 	}    
 
@@ -215,9 +229,8 @@ Therefore #receiver sends a packet across the token ring network, until either
 			report.write("' on '");
 			report.write(printer);
 			report.write("' ...\n");
-		} catch (IOException exc) {
-			// just ignore
-		};
+		} catch (IOException ignored) {
+        }
 
 		boolean result = false;
 		Node startNode, currentNode;
@@ -239,9 +252,8 @@ Therefore #receiver sends a packet across the token ring network, until either
 			try {
 				report.write(">>> Destinition not found, print job cancelled.\n\n");
 				report.flush();
-			} catch (IOException exc) {
-				// just ignore
-			};
+			} catch (IOException ignored) {
+	        }
 			result = false;
 		}
 
@@ -262,7 +274,7 @@ Return a printable representation of #receiver.
 	 */
 	public String toString () {
 		assert isInitialized();
-		StringBuffer buf = new StringBuffer(30 * workstations_.size());
+		StringBuffer buf = new StringBuffer(INITIAL_BUFFER_CAPACITY  * workstations_.size());
 		printOn(firstNode_, buf);
 		return buf.toString();
 	}

@@ -72,9 +72,8 @@ Construct a <em>Node</em> with given #type and #name, and which is linked to #ne
 			report.write(name_);
 			report.write("' passes packet on.\n");
 			report.flush();
-		} catch (IOException exc) {
-			// just ignore
-		};
+		} catch (IOException ignored) {
+        }
 	}
 
 	public void toXML(StringBuffer buf) {
@@ -95,9 +94,8 @@ Construct a <em>Node</em> with given #type and #name, and which is linked to #ne
 		try {
 			report.write(">>> Destinition is not a printer, print job cancelled.\n\n");
 			report.flush();
-		} catch (IOException exc) {
-			// just ignore
-		};
+		} catch (IOException ignored) {
+        }
 		return false;
 	
 	
