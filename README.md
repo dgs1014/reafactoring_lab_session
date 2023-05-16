@@ -26,3 +26,15 @@ El contenido del directorio es:
   El directorio que contiene la versión de código Java (organizado en subdirectorios para los diferentes paquetes).
   Los ficheros de comandos compileLAN, generateJavaDoc, runLAN compila, ejecuta o genera la documentanción de la simulación.
   Puedes definir estas tareas en tu entorno de desarrollo. 
+
+Alumnos
+========================
+Práctica realizada por:
+* Miguel Fuente García (mhf1014@alu.ubu.es)
+* Diego González San Emeterio (dgs1014@alu.ubu.es)
+* Mario Hurtado Ubierna (mhu1001@alu.ubu.es)
+* Gadea Lucas Pérez (glp1002@alu.ubu.es)
+
+</br>
+
+![Imágen](./imagen_graciosa.jpeg)
